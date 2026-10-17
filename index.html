@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e8f2eb">
+<title>Дневник аллергии</title>
+<style>
+:root{--bg:#f5f7f5;--card:#fff;--ink:#20372b;--muted:#6b7b70;--green:#367451;--pale:#e8f2eb;--line:#e4eae5;--red:#a33d35;--amber:#8a651c}
+[hidden]{display:none!important}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}
+button,input,textarea,select{font:inherit} button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100dvh;padding:0 16px 100px}
+header{padding:22px 2px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;gap:11px;align-items:center}.logo{width:44px;height:44px;border-radius:15px;background:var(--pale);display:grid;place-items:center;font-size:23px}
+h1{font-size:20px;margin:0;font-weight:760;letter-spacing:-.4px} .sub{font-size:12px;color:var(--muted);margin-top:3px}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px 12px;color:var(--ink)}
+.hero{background:linear-gradient(135deg,#e8f2eb,#f2f7f3);border:1px solid #dce9df;border-radius:24px;padding:20px;margin-bottom:16px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--green);font-weight:750}
+.hero h2{font-size:25px;line-height:1.15;margin:8px 0}.hero p{margin:0;color:#587060;font-size:13px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.quick button{background:#fff;border:1px solid #e2ebe4;border-radius:16px;padding:14px;text-align:left;color:var(--ink);min-height:94px}
+.qicon{font-size:23px;display:block;margin-bottom:8px}.quick strong{display:block;font-size:14px}.quick small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.sectionhead h3{margin:0;font-size:17px}.textbtn{border:0;background:none;color:var(--green);font-weight:700;padding:5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:10px}
+.empty{padding:22px 14px;text-align:center;color:var(--muted);font-size:13px}
+.entrytop{display:flex;justify-content:space-between;gap:10px}.entrytitle{font-weight:750}.time{font-size:12px;color:var(--muted);white-space:nowrap}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.tag{font-size:11px;background:#f0f4f1;border-radius:99px;padding:5px 8px;color:#476251}.tag.warn{background:#fff0e7;color:#9a4b2b}
+.entrynote{font-size:13px;color:var(--muted);margin-top:8px;white-space:pre-wrap}
+.bottomnav{position:fixed;z-index:5;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center}
+.navinner{display:flex;width:100%;max-width:760px;justify-content:space-around}.navbtn{border:0;background:none;color:#78867c;padding:7px 13px;border-radius:13px;font-size:11px;min-width:70px}.navbtn span{display:block;font-size:20px;margin-bottom:3px}.navbtn.active{background:var(--pale);color:var(--green);font-weight:750}
+.view{display:none}.view.active{display:block}
+form{display:block}.formcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:17px;margin-bottom:12px}
+.formtitle{font-size:18px;font-weight:800;margin:0 0 4px}.formdesc{font-size:12px;color:var(--muted);margin:0 0 18px}
+label{display:block;font-size:13px;font-weight:700;margin:14px 0 7px}
+input[type=text],input[type=number],input[type=datetime-local],textarea,select{width:100%;border:1px solid #dce4dd;border-radius:12px;background:#fff;padding:12px;color:var(--ink);outline:none}
+textarea{min-height:75px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:#79a58a;box-shadow:0 0 0 3px #e8f2eb}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.primary{width:100%;border:0;background:var(--green);color:white;padding:14px;border-radius:14px;font-weight:800;margin-top:14px}.secondary{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 12px;border-radius:12px;font-weight:700}
+.symptoms{display:grid;grid-template-columns:1fr 1fr;gap:8px}.symptom{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;font-size:12px;font-weight:550;margin:0}.symptom input{accent-color:var(--green);width:16px;height:16px}
+.severity{display:flex;gap:6px;flex-wrap:wrap}.severity label{margin:0}.severity input{position:absolute;opacity:0}.severity span{display:block;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12px}.severity input:checked+span{background:var(--pale);border-color:#8db49a;color:var(--green);font-weight:800}
+.notice{font-size:12px;line-height:1.5;background:#fff8e8;border:1px solid #f0e2bd;color:#75591d;padding:12px;border-radius:14px;margin:12px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px}.stat b{font-size:25px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.listrow{display:flex;justify-content:space-between;align-items:center;gap:12px}.danger{border:0;background:none;color:var(--red);font-size:12px;padding:8px}
+footer{font-size:11px;color:var(--muted);text-align:center;padding:18px 5px}
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:#20372b;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;display:none;z-index:10;max-width:90%}
+@media(min-width:600px){.quick{grid-template-columns:1fr 1fr}.symptoms{grid-template-columns:1fr 1fr 1fr}.app{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">🌿</div><div><h1>Дневник аллергии</h1><div class="sub">Личные наблюдения · хранение на устройстве</div></div></div>
+ <button class="iconbtn" id="exportBtn" aria-label="Экспорт">↗</button>
+</header>
+
+<section class="view active" id="homeView">
+ <div class="hero">
+  <div class="eyebrow">Ваш дневник</div>
+  <h2 id="todayHeading">Сегодня</h2>
+  <p>Записывайте еду и самочувствие, чтобы видеть историю наблюдений.</p>
+  <div class="quick">
+   <button onclick="showView('foodView')"><span class="qicon">🥣</span><strong>Добавить еду</strong><small>Что и когда вы ели</small></button>
+   <button onclick="showView('reactionView')"><span class="qicon">✳️</span><strong>Записать реакцию</strong><small>Можно выбрать несколько симптомов</small></button>
+  </div>
+ </div>
+ <div class="sectionhead"><h3>Другие разделы</h3></div>
+ <div class="quick">
+  <button onclick="showView('historyView')"><span class="qicon">▤</span><strong>История</strong><small>Все записи и фильтры</small></button>
+  <button onclick="showView('analysisView')"><span class="qicon">⌕</span><strong>Анализ</strong><small>Возможные закономерности</small></button>
+  <button onclick="showView('settingsView')"><span class="qicon">⚙</span><strong>Данные</strong><small>Резервная копия и импорт</small></button>
+ </div>
+ <div class="notice">Если возникают затруднение дыхания, отёк языка или горла, внезапная слабость или быстро нарастающая реакция, срочно обращайтесь за экстренной помощью. Дневник не заменяет медицинскую оценку.</div>
+ <div class="sectionhead"><h3>Последние записи</h3><button class="textbtn" onclick="showView('historyView')">Вся история →</button></div>
+ <div id="recentEntries"></div>
+</section>
+
+<section class="view" id="foodView">
+ <div class="sectionhead"><h3>Добавить приём пищи</h3><button class="textbtn" onclick="showView('homeView')">Закрыть</button></div>
+ <form id="foodForm" class="formcard">
+  <p class="formtitle">Что вы ели?</p><p class="formdesc">Запишите продукты как можно точнее. Можно указать несколько продуктов в одной записи.</p>
+  <label for="foodName">Продукт или блюдо *</label><input id="foodName" type="text" required placeholder="Например, йогурт с клубникой">
+  <div class="grid2">
+   <div><label for="foodDate">Дата и время *</label><input id="foodDate" type="datetime-local" required></div>
+   <div><label for="foodAmount">Количество</label><input id="foodAmount" type="text" placeholder="Например, 150 г"></div>
+  </div>
+  <label for="foodBrand">Бренд / производитель</label><input id="foodBrand" type="text" placeholder="Например, Arla, ICA, Oatly">
+  <label for="foodIngredients">Состав / ингредиенты</label><textarea id="foodIngredients" placeholder="Например, молоко, клубника, сахар, загуститель…"></textarea>
+  <label for="foodNotes">Заметки</label><textarea id="foodNotes" placeholder="Где ели, как приготовлено, другие детали…"></textarea>
+  <button class="primary" type="submit">Сохранить приём пищи</button>
+ </form>
+ <div class="sectionhead" style="margin-top:20px"><h3>История приёмов пищи</h3></div>
+ <div id="foodEntryHistory"></div>
+</section>
+
+<section class="view" id="reactionView">
+ <div class="sectionhead"><h3>Записать реакцию</h3><button class="textbtn" onclick="showView('homeView')">Закрыть</button></div>
+ <form id="reactionForm" class="formcard">
+  <p class="formtitle">Что вы почувствовали?</p><p class="formdesc">Выберите один симптом и укажите время начала реакции.</p>
+  <p class="hint">После сохранения реакции в истории появится кнопка «Завершить реакцию», чтобы отметить время её окончания.</p>
+  <label>Симптом * (выберите один)</label>
+  <div class="symptoms">
+   <label class="symptom"><input type="radio" name="symptom" value="Зуд кожи">Зуд кожи</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Покраснение">Покраснение</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Крапивница / сыпь">Крапивница / сыпь</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Отёк">Отёк</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Насморк / чихание">Насморк / чихание</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Зуд глаз">Зуд глаз</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Покраснение глаз">Покраснение глаз</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Крупные красные водянистые высыпания на лице">Крупные красные водянистые высыпания на лице</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Мелкие белые высыпания на лице">Мелкие белые высыпания на лице</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Боль в животе">Боль в животе</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Тошнота">Тошнота</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Диарея">Диарея</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Головная боль">Головная боль</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Кашель">Кашель</label>
+   <label class="symptom"><input type="radio" name="symptom" value="Другое">Другое</label>
+  </div>
+  <label>Интенсивность</label>
+  <div class="severity">
+   <label><input type="radio" name="severity" value="1"><span>1 · слабая</span></label>
+   <label><input type="radio" name="severity" value="2"><span>2</span></label>
+   <label><input type="radio" name="severity" value="3"><span>3</span></label>
+   <label><input type="radio" name="severity" value="4"><span>4</span></label>
+   <label><input type="radio" name="severity" value="5"><span>5 · сильная</span></label>
+  </div>
+  <div class="grid2">
+   <div><label for="reactionStart">Когда заметили реакцию? *</label><input id="reactionStart" type="datetime-local" required></div>
+   <div><label for="reactionDuration">Общие заметки о длительности</label><input id="reactionDuration" type="text" placeholder="Например, симптомы были волнами"></div>
+  </div>
+  <label for="possibleCause">Что могло предшествовать?</label><input id="possibleCause" type="text" placeholder="Еда, напиток, пыльца, косметика…">
+  <label for="reactionNotes">Дополнительные заметки</label><textarea id="reactionNotes" placeholder="Где появились симптомы, что помогло, другие обстоятельства…"></textarea>
+  <button class="primary" type="submit">Сохранить реакцию</button>
+ </form>
+ <div class="sectionhead" style="margin-top:20px"><h3>История реакций</h3></div>
+ <div id="reactionEntryHistory"></div>
+</section>
+
+<section class="view" id="historyView">
+ <div class="sectionhead"><h3>История записей</h3><button class="textbtn" onclick="showView('homeView')">На главную</button></div>
+ <div class="sectionhead"><h3>Поиск и фильтры</h3><button class="textbtn" id="clearFilter" onclick="resetHistoryFilter()">Сбросить</button></div>
+ <div class="formcard" style="margin-bottom:14px">
+  <label for="historyFilter">Показывать</label>
+  <select id="historyFilter" onchange="renderHistory()">
+   <option value="all">Все записи</option>
+<option value="all_reactions">Все реакции</option>
+    <option value="completed_factors">Завершённые контакты</option>
+    <option value="ongoing_factors">Незавершённые контакты</option>
+    <option value="all_factors">Все контакты</option>
+   <option value="ongoing">Все незавершённые реакции</option>
+   <option value="completed">Завершённые реакции</option>
+   <option value="food">Приёмы пищи</option>
+  </select>
+  <label for="historySearch">Поиск по симптомам, продуктам и заметкам</label>
+  <input id="historySearch" type="search" placeholder="Например, покраснение глаз или йогурт" oninput="renderHistory()">
+  <div class="formactions" style="margin-top:10px"><button type="button" id="applyHistoryFilter" class="primary" onclick="renderHistory()">Применить фильтр</button></div>
+  <p class="hint" id="historyResultCount" style="margin:8px 0 0"></p>
+ </div>
+ <div class="sectionhead"><h3>Результаты</h3></div>
+ <div id="allEntries"></div>
+</section>
+
+
+<section class="view" id="analysisView">
+ <div class="sectionhead"><h3>Анализ продуктов</h3><button class="textbtn" onclick="showView('homeView')">На главную</button></div>
+ <div class="hero" style="padding:17px">
+  <div class="eyebrow">Поиск возможных закономерностей</div>
+  <h2 style="font-size:22px">Что могло предшествовать реакции?</h2>
+  <p>Сопоставляем еду и контакты с возможными факторами — например, комнатными растениями — с более поздними реакциями. Результаты помогают заметить закономерности, но не устанавливают причину.</p>
+ </div>
+ <div class="formcard">
+  <label for="analysisWindow">Учитывать еду за период до реакции</label>
+  <select id="analysisWindow">
+   <option value="6">Последние 6 часов</option>
+   <option value="12">Последние 12 часов</option>
+   <option value="24">Последние 24 часа</option>
+   <option value="48">Последние 48 часов</option>
+   <option value="168">Последние 7 дней</option>
+   <option value="336">Последние 14 дней</option>
+   <option value="720" selected>Последние 30 дней</option>
+  </select>
+  <p class="hint">Для реакций, которые появляются не сразу, можно выбрать 7, 14 или 30 дней. Чем длиннее период, тем больше случайных совпадений может появиться.</p>
+ </div>
+ <div id="analysisSummary"></div>
+ <div class="sectionhead"><h3>Продукты для внимательного наблюдения</h3></div>
+ <div id="foodRanking"></div>
+ <div class="sectionhead"><h3>Что было перед каждой реакцией</h3></div>
+ <div id="reactionMatches"></div>
+ <div class="notice">Как читать результат: продукт считается возможным кандидатом, если он был записан в выбранном интервале до реакции. Несколько продуктов могли быть съедены в этот период, поэтому приложение не может определить виновный продукт. Не исключайте целые группы продуктов и не проводите домашние провокационные тесты без консультации медицинского специалиста.</div>
+</section>
+
+<section class="view" id="factorView">
+ <div class="sectionhead"><h3>Контакты с факторами</h3><button class="textbtn" onclick="showView('homeView')">На главную</button></div>
+ <div class="hero" style="padding:17px">
+  <div class="eyebrow">Наблюдение за контактами</div>
+  <h2 style="font-size:22px">Что могло повлиять на самочувствие?</h2>
+  <p>Записывайте контакты с растениями, косметикой, бытовой химией, пылью, животными и другими возможными факторами. Продолжающийся контакт можно завершить отдельной кнопкой.</p>
+ </div>
+ <div class="formcard">
+  <p class="formtitle">Записать контакт с фактором</p>
+  <p class="formdesc">Отмечайте контакт с комнатными растениями, косметикой, бытовой химией, пылью и другими возможными факторами — даже если реакции пока нет.</p>
+  <form id="factorForm">
+   <label for="factorName">Фактор или растение *</label>
+   <input id="factorName" type="text" placeholder="Например, фикус, монстера, удобрение">
+   <label for="factorCategory">Тип фактора</label>
+   <select id="factorCategory">
+    <option>Комнатное растение</option><option>Косметика</option><option>Бытовая химия</option><option>Пыль / пыльца</option><option>Животное</option><option>Другое</option>
+   </select>
+   <label for="factorMode">Как происходил контакт?</label>
+   <select id="factorMode" onchange="updateFactorMode()">
+    <option value="moment">В конкретный момент</option>
+    <option value="period">В течение периода</option>
+    <option value="ongoing">Начался с даты и продолжается</option>
+   </select>
+   <div id="factorMomentFields">
+    <label for="factorDate">Дата и время контакта *</label><input id="factorDate" type="datetime-local">
+   </div>
+   <div id="factorPeriodFields" hidden>
+    <label for="factorStart">Начало периода *</label>
+    <input id="factorStart" type="datetime-local">
+    <label for="factorEnd">Дата и время окончания периода *</label>
+    <input id="factorEnd" type="datetime-local">
+   </div>
+   <div id="factorOngoingFields" hidden>
+    <label for="factorSince">Дата начала контакта *</label><input id="factorSince" type="date">
+    <p class="hint">Например, растение постоянно находится в комнате или ты регулярно с ним контактируешь.</p>
+   </div>
+   <label for="factorNotes">Заметки</label><textarea id="factorNotes" placeholder="Например, пересаживала растение, поливала, касалась листьев…"></textarea>
+   <button class="primary" type="submit">Сохранить контакт</button>
+  </form>
+ </div>
+
+ <div class="notice" id="localStorageNotice" hidden>Для надёжного сохранения записей откройте дневник через постоянный HTTPS-адрес, например GitHub Pages, а не как локальный HTML-файл.</div>
+ <div class="sectionhead"><h3>Сохранённые контакты</h3></div>
+ <div id="factorEntries"></div>
+</section>
+
+<section class="view" id="settingsView">
+ <div class="sectionhead"><h3>Настройки и данные</h3></div>
+ <div class="formcard">
+  <p class="formtitle">Конфиденциальность</p>
+  <p class="formdesc">Этот прототип сохраняет записи в локальном хранилище браузера на этом устройстве. Данные не отправляются на сервер.</p>
+  <button class="secondary" onclick="exportData()">Скачать резервную копию</button>
+  <label for="importFile2">Импортировать резервную копию</label><input id="importFile2" type="file" accept=".json,application/json">
+  <div class="notice">Если очистить данные браузера, удалить сайт или потерять устройство, записи могут исчезнуть. Регулярно сохраняйте резервную копию.</div>
+  <button class="secondary" style="color:var(--red)" onclick="deleteAll()">Удалить все записи</button>
+ </div>
+ <div class="formcard">
+  <p class="formtitle">О приложении</p>
+  <p class="formdesc">Первая тестовая версия дневника. Она помогает вести наблюдения, но не определяет аллергены и не заменяет консультацию врача.</p>
+ </div>
+</section>
+<footer>Прототип дневника аллергии · ваши записи остаются в этом браузере</footer>
+</div>
+
+<nav class="bottomnav"><div class="navinner">
+ <button class="navbtn active" data-view="homeView"><span>⌂</span>Главная</button>
+ <button class="navbtn" data-view="foodView"><span>🥣</span>Еда</button>
+ <button class="navbtn" data-view="reactionView"><span>✳</span>Реакция</button>
+ <button class="navbtn" data-view="factorView"><span>🌿</span>Контакты</button>
+ <button class="navbtn" data-view="historyView"><span>▤</span>История</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+<script>
+const KEY='allergyDiaryEntriesV1';
+let entries=[];
+try{entries=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){entries=[]}
+const $=id=>document.getElementById(id);
+function localDateTime(d=new Date()){const z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`}
+function dateLabel(s){if(!s)return '';const d=new Date(s);return d.toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+function factorDateLabel(x){
+ if(x.type!=='factor')return dateLabel(x.date);
+ if(x.ongoing)return `С ${new Date(x.startDate).toLocaleDateString('ru-RU')} · продолжается`;
+ if(x.endDate)return `${dateLabel(x.startDate||x.date)} — ${dateLabel(x.endDate)}`;
+ return dateLabel(x.startDate||x.date);
+}
+function todayLabel(){return new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'})}
+function save(){
+ try{
+  const serialized=JSON.stringify(entries);
+  localStorage.setItem(KEY,serialized);
+  const saved=localStorage.getItem(KEY);
+  if(saved!==serialized) throw new Error('Storage verification failed');
+  return true;
+ }catch(err){
+  console.error('Could not save diary data:',err);
+  const isLocalFile=location.protocol==='file:';
+  toast(isLocalFile
+   ? 'Браузер не сохраняет данные для локального HTML-файла. Откройте дневник через GitHub Pages (HTTPS).'
+   : 'Не удалось записать данные в хранилище браузера. Проверьте настройки сайта и свободное место.');
+  return false;
+ }
+}
+function toast(s){const t=$('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2500)}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b.dataset.view===id));if(id==='historyView')renderHistory();if(id==='analysisView')renderAnalysis();if(id==='factorView')renderFactors();if(id==='foodView')renderFoodHistory();if(id==='reactionView')renderReactionHistory();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function entryCard(e){
+ let tags='';
+ if(e.type==='food'){
+  tags=`<span class="tag">Приём пищи</span>${e.amount?`<span class="tag">${esc(e.amount)}</span>`:''}`;
+ }else if(e.type==='factor'){
+  tags=`<span class="tag">${esc(e.category||'Фактор')}</span><span class="tag ${e.ongoing?'warn':''}">${e.ongoing?'Контакт продолжается':e.endDate?'Контакт завершён':'Разовый контакт'}</span>`;
+ }else{
+  tags=`<span class="tag warn">Реакция</span><span class="tag ${e.endedAt?'':'warn'}">${e.endedAt?'Завершена':'Продолжается'}</span>${(e.symptoms||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join('')}${e.severity?`<span class="tag">Интенсивность: ${e.severity}/5</span>`:''}`;
+ }
+ const icon=e.type==='food'?'🥣':e.type==='factor'?'🌿':'✳️';
+ return `<div class="card"><div class="entrytop"><div class="entrytitle">${icon} ${esc(e.title)}</div><div class="time">${e.type==='factor'?factorDateLabel(e):dateLabel(e.date)}</div></div><div class="tagrow">${tags}</div>${e.type==='factor'&&e.endDate?`<div class="entrynote">Контакт завершён: <strong>${dateLabel(e.endDate)}</strong></div>`:''}${e.type==='reaction'&&e.endedAt?`<div class="entrynote">Реакция закончилась: <strong>${dateLabel(e.endedAt)}</strong></div>`:''}${e.type==='reaction'&&e.symptomDetails&&e.symptomDetails.length?`<div class="entrynote">${e.symptomDetails.map(d=>`<div style="margin-top:6px"><strong>${esc(d.name)}</strong> · начало: ${d.start?dateLabel(d.start):'не указано'} · окончание: ${d.end?dateLabel(d.end):'ещё продолжается'}${d.severity!==''&&d.severity!=null?` · интенсивность ${d.severity}/10`:''}</div>`).join('')}</div>`:''}${e.notes?`<div class="entrynote">${esc(e.notes)}</div>`:''}<div class="listrow" style="margin-top:7px"><span class="hint">${e.type==='food'?[e.brand?`Бренд: ${esc(e.brand)}`:'',e.ingredients?`Состав: ${esc(e.ingredients)}`:''].filter(Boolean).join(' · '):e.type==='reaction'&&e.cause?`Возможный фактор: ${esc(e.cause)}`:''}</span><div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:flex-end">${e.type==='reaction'?(e.endedAt?`<button class="secondary" onclick="editReactionEnd('${e.id}')">Изменить время</button>`:`<button class="secondary" onclick="endReaction('${e.id}')">Завершить реакцию</button>`):e.type==='factor'&&e.ongoing?`<button class="secondary" onclick="endFactor('${e.id}')">Завершить контакт</button>`:''}<button class="danger" onclick="removeEntry('${e.id}')">Удалить</button></div></div></div>`;
+}
+function render(){ $('todayHeading').textContent=todayLabel();const sorted=[...entries].sort((a,b)=>new Date(b.date)-new Date(a.date));$('recentEntries').innerHTML=sorted.length?sorted.slice(0,4).map(entryCard).join(''):'<div class="card empty">Пока нет записей. Добавьте первый приём пищи или отметьте реакцию.</div>';renderHistory()}
+function renderEntryTypeHistory(type,containerId,emptyText){const target=$(containerId);if(!target)return;const items=entries.filter(e=>e.type===type).sort((a,b)=>new Date(b.date)-new Date(a.date));target.innerHTML=items.length?items.map(entryCard).join(''):`<div class="card empty">${emptyText}</div>`}
+function renderFoodHistory(){renderEntryTypeHistory('food','foodEntryHistory','Записей о еде пока нет. Сохранённые приёмы пищи появятся здесь.')}
+function renderReactionHistory(){renderEntryTypeHistory('reaction','reactionEntryHistory','Записей о реакциях пока нет. Сохранённые реакции появятся здесь.')}
+window.renderHistory = function renderHistory(){
+ const sorted=[...entries].sort((a,b)=>new Date(b.date)-new Date(a.date));
+ const foods=entries.filter(e=>e.type==='food').length;
+ const reactions=entries.filter(e=>e.type==='reaction').length;
+ const ongoing=entries.filter(e=>e.type==='reaction'&&!e.endedAt).length;
+ const factors=entries.filter(e=>e.type==='factor').length;
+ const ongoingFactors=entries.filter(e=>e.type==='factor'&&e.ongoing).length;
+ const filter=$('historyFilter').value;
+ const query=($('historySearch').value||'').trim().toLocaleLowerCase('ru-RU');
+ const isOngoing = e => e.type === 'reaction' && (e.endedAt == null || String(e.endedAt).trim() === '');
+ let filtered=sorted.filter(e=>{
+  if(filter==='ongoing'&&!isOngoing(e))return false;
+  if(filter==='completed'&&!(e.type==='reaction'&&e.endedAt != null && String(e.endedAt).trim() !== ''))return false;
+  if(filter==='all_reactions'&&e.type!=='reaction')return false;
+  if(filter==='all_factors'&&e.type!=='factor')return false;
+  if(filter==='ongoing_factors'&&!(e.type==='factor'&&e.ongoing))return false;
+  if(filter==='completed_factors'&&!(e.type==='factor'&&!e.ongoing))return false;
+  if(filter==='food'&&e.type!=='food')return false;
+  if(query){
+   const haystack=[e.title,e.notes,e.cause,e.brand,e.ingredients,e.amount,e.category,...(e.symptoms||[]),...(e.symptomDetails||[]).map(d=>d.name)].filter(Boolean).join(' ').toLocaleLowerCase('ru-RU');
+   if(!haystack.includes(query))return false;
+  }
+  return true;
+ });
+ const resultCount=$('historyResultCount');if(resultCount)resultCount.textContent=`Показано записей: ${filtered.length}`;
+ $('allEntries').innerHTML=filtered.length?filtered.map(entryCard).join(''):'<div class="card empty">'+(entries.length?'По выбранному фильтру ничего не найдено.':'История пока пуста.')+'</div>';
+}
+function endReaction(id){
+ const reaction=entries.find(e=>e.id===id&&e.type==='reaction');
+ if(!reaction||reaction.endedAt)return;
+ const endedAt=localDateTime();
+ const previousEndedAt=reaction.endedAt;
+ const previousSymptomEnds=(reaction.symptomDetails||[]).map(d=>d.end);
+ reaction.endedAt=endedAt;
+ // Any symptom without an end time is treated as ending with the overall reaction.
+ (reaction.symptomDetails||[]).forEach(d=>{if(!d.end)d.end=endedAt;});
+ if(!save()){
+  delete reaction.endedAt;
+  (reaction.symptomDetails||[]).forEach((d,i)=>{d.end=previousSymptomEnds[i]||'';});
+  return;
+ }
+ // Refresh every visible list that can show this reaction, including the history on the Reaction page.
+ render();
+ renderReactionHistory();
+ renderHistory();
+ renderAnalysis();
+ toast('Реакция завершена. Запись обновлена');
+}
+function editReactionEnd(id){
+ const reaction=entries.find(e=>e.id===id&&e.type==='reaction');
+ if(!reaction)return;
+ const previousEnd=reaction.endedAt||'';
+ const entered=prompt('Укажите дату и время окончания в формате ГГГГ-ММ-ДДTЧЧ:ММ',previousEnd||localDateTime());
+ if(entered===null)return;
+ const parsed=new Date(entered);
+ if(!entered.trim()||Number.isNaN(parsed.getTime())){alert('Не удалось распознать дату и время. Пример: 2026-10-17T14:30');return;}
+ reaction.endedAt=entered;
+ // Update symptom end times only when they matched the previous overall end; preserve individually recorded end times.
+ (reaction.symptomDetails||[]).forEach(d=>{if(!d.end||d.end===previousEnd)d.end=entered;});
+ save();toast('Время окончания обновлено');
+}
+function renderFactors(){
+ const factors=entries.filter(e=>e.type==='factor').sort((a,b)=>new Date(b.startDate||b.date)-new Date(a.startDate||a.date));
+ $('factorEntries').innerHTML=factors.length?factors.map(entryCard).join(''):'<div class="card empty">Пока нет контактов. Добавьте первый контакт с возможным фактором.</div>';
+}
+function endFactor(id){
+ const factor=entries.find(e=>e.id===id&&e.type==='factor');
+ if(!factor||!factor.ongoing)return;
+ const endedAt=localDateTime();
+ factor.ongoing=false;
+ factor.endDate=endedAt;
+ factor.mode='period';
+ save();
+ renderFactors();
+ renderAnalysis();
+ toast('Контакт отмечен как завершённый');
+}
+function removeEntry(id){if(confirm('Удалить эту запись?')){entries=entries.filter(e=>e.id!==id);save();toast('Запись удалена')}}
+function deleteAll(){if(confirm('Удалить ВСЕ записи? Это действие нельзя отменить. Сначала скачайте резервную копию, если она нужна.')){entries=[];save();toast('Все записи удалены')}}
+$('foodDate').value=localDateTime();$('reactionStart').value=localDateTime();
+$('foodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('foodName').value.trim();if(!name)return;const newEntry={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),type:'food',title:name,date:$('foodDate').value,amount:$('foodAmount').value.trim(),brand:$('foodBrand').value.trim(),ingredients:$('foodIngredients').value.trim(),notes:$('foodNotes').value.trim()};entries.push(newEntry);if(!save()){entries.pop();return}e.target.reset();$('foodDate').value=localDateTime();renderFoodHistory();render();toast('Запись о еде сохранена')});
+
+$('reactionForm').addEventListener('submit',e=>{e.preventDefault();const symptoms=[...document.querySelectorAll('input[name="symptom"]:checked')].map(x=>x.value);if(!symptoms.length){toast('Выберите один симптом');return}const sev=document.querySelector('input[name="severity"]:checked');const newEntry={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),type:'reaction',title:symptoms[0],symptoms,severity:sev?sev.value:'',date:$('reactionStart').value,endedAt:'',duration:$('reactionDuration').value.trim(),cause:$('possibleCause').value.trim(),notes:$('reactionNotes').value.trim()};entries.push(newEntry);if(!save()){entries.pop();return}e.target.reset();$('reactionStart').value=localDateTime();renderReactionHistory();render();toast('Запись о реакции сохранена')});
+function exportData(){const blob=new Blob([JSON.stringify({app:'Дневник аллергии',version:1,exportedAt:new Date().toISOString(),entries},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='dnevnik-allergii-backup.json';a.click();URL.revokeObjectURL(url);toast('Резервная копия подготовлена')}
+$('exportBtn').addEventListener('click',exportData);
+function importFile(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);const incoming=Array.isArray(data)?data:data.entries;if(!Array.isArray(incoming))throw new Error('bad');const ids=new Set(entries.map(x=>x.id));incoming.forEach(x=>{if(x&&x.id&&!ids.has(x.id)){entries.push(x);ids.add(x.id)}});save();toast('Импорт завершён')}catch(err){alert('Не удалось прочитать файл. Выберите резервную копию JSON из этого дневника.')}};r.readAsText(file)}
+const importInput=$('importFile2');
+if(importInput) importInput.addEventListener('change',e=>importFile(e.target.files[0]));
+function resetHistoryFilter(){
+ $('historyFilter').value='ongoing';
+ $('historySearch').value='';
+ renderHistory();
+}
+
+function renderAnalysis(){
+ const windowHours=Number($('analysisWindow').value||720);
+ const foods=entries.filter(e=>e.type==='food'&&e.date&&e.title);
+ const factors=entries.filter(e=>e.type==='factor'&&e.date&&e.title);
+ const exposures=[...foods,...factors];
+ const reactions=entries.filter(e=>e.type==='reaction'&&e.date).sort((a,b)=>new Date(a.date)-new Date(b.date));
+ function exposureOverlapsLookback(x, reactionTime){
+   const windowStart=reactionTime-windowHours*3600000;
+   if(x.type==='factor'){
+     const start=new Date(x.startDate||x.date).getTime();
+     const end=x.ongoing?reactionTime:(x.endDate?new Date(x.endDate).getTime():start);
+     return start<=reactionTime && end>=windowStart;
+   }
+   const t=new Date(x.date).getTime();
+   return t<=reactionTime && t>=windowStart;
+ }
+ const matchesByReaction=reactions.map(r=>{
+   const rt=new Date(r.date).getTime();
+   const candidates=exposures.filter(x=>exposureOverlapsLookback(x,rt)).sort((a,b)=>new Date(b.startDate||b.date)-new Date(a.startDate||a.date));
+   return {reaction:r,candidates};
+ });
+ const matchedCount=matchesByReaction.filter(x=>x.candidates.length).length;
+ const candidatesByName=new Map();
+ exposures.forEach(x=>{
+   const key=(x.type==='factor'?'factor:':'food:')+x.title.trim().toLocaleLowerCase('ru-RU');
+   if(!candidatesByName.has(key))candidatesByName.set(key,{name:x.title.trim(),type:x.type,category:x.category||'',exposures:[],afterReaction:0,reactionIds:new Set()});
+   candidatesByName.get(key).exposures.push(x);
+ });
+ candidatesByName.forEach(item=>{
+   item.exposures.forEach(x=>{
+     const following=reactions.filter(r=>exposureOverlapsLookback(x,new Date(r.date).getTime()));
+     if(following.length){item.afterReaction++;following.forEach(r=>item.reactionIds.add(r.id));}
+   });
+   item.rate=item.exposures.length?Math.round(item.afterReaction/item.exposures.length*100):0;
+ });
+ const ranked=[...candidatesByName.values()].sort((a,b)=>b.reactionIds.size-a.reactionIds.size||b.rate-a.rate||b.exposures.length-a.exposures.length);
+ const durationLabel=windowHours>=720?'30 дней':windowHours>=336?'14 дней':windowHours>=168?'7 дней':`${windowHours} ч`;
+ $('analysisSummary').innerHTML=`
+  <div class="stats">
+   <div class="stat"><b>${foods.length}</b><span>Записей о еде</span></div>
+   <div class="stat"><b>${factors.length}</b><span>Контактов с факторами</span></div>
+   <div class="stat"><b>${reactions.length}</b><span>Записей о реакциях</span></div>
+   <div class="stat"><b>${matchedCount}</b><span>Реакций с предшествующими записями за ${durationLabel}</span></div>
+  </div>`;
+ $('foodRanking').innerHTML=ranked.length?ranked.map((x,i)=>`
+  <div class="card">
+   <div class="entrytop"><div class="entrytitle">${i+1}. ${x.type==='factor'?'🌿':'🥣'} ${esc(x.name)}</div><span class="tag ${x.afterReaction?'warn':''}">${x.rate}%</span></div>
+   <div class="tagrow"><span class="tag">${x.type==='factor'?esc(x.category||'Фактор'):'Продукт'}</span><span class="tag">Записей: ${x.exposures.length}</span><span class="tag">Записей, после которых отмечена реакция: ${x.afterReaction}</span><span class="tag">Разных реакций рядом по времени: ${x.reactionIds.size}</span></div>
+   <div class="entrynote">${x.afterReaction?'После этой записи в выбранном интервале была зарегистрирована реакция.':'В дневнике нет реакции в выбранном интервале после этой записи.'}</div>
+  </div>`).join(''):'<div class="card empty">Пока недостаточно записей. Добавляйте приёмы пищи и контакты с возможными факторами, даже если реакции нет.</div>';
+ $('reactionMatches').innerHTML=matchesByReaction.length?matchesByReaction.slice().reverse().map(({reaction,candidates})=>`
+  <div class="card">
+   <div class="entrytop"><div class="entrytitle">✳️ ${esc(reaction.title||'Реакция')}</div><div class="time">${dateLabel(reaction.date)}</div></div>
+   <div class="tagrow">${(reaction.symptoms||[]).map(s=>`<span class="tag warn">${esc(s)}</span>`).join('')}</div>
+   ${candidates.length?`<div class="entrynote" style="margin-top:11px;color:var(--ink);font-weight:700">Записи за ${durationLabel} до реакции:</div><div class="tagrow">${candidates.map(x=>`<span class="tag">${x.type==='factor'?'🌿':'🥣'} ${esc(x.title)} · ${factorDateLabel(x)}</span>`).join('')}</div>`:'<div class="entrynote">В выбранном интервале нет записей о еде или контактах с факторами.</div>'}
+  </div>`).join(''):'<div class="card empty">Сначала добавьте хотя бы одну запись о реакции.</div>';
+}
+$('analysisWindow').addEventListener('change',renderAnalysis);
+if(location.protocol==='file:') $('localStorageNotice').hidden=false;
+$('factorDate').value=localDateTime();
+$('factorStart').value=localDateTime();
+$('factorEnd').value=localDateTime();
+$('factorSince').value=new Date().toISOString().slice(0,10);
+function updateFactorMode(){
+ const mode=$('factorMode').value;
+ $('factorMomentFields').hidden=mode!=='moment';
+ $('factorPeriodFields').hidden=mode!=='period';
+ $('factorOngoingFields').hidden=mode!=='ongoing';
+ $('factorDate').required=false;
+ $('factorStart').required=false;
+ $('factorEnd').required=false;
+ $('factorSince').required=false;
+}
+$('factorMode').addEventListener('change',updateFactorMode);
+updateFactorMode();
+$('factorForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const name=$('factorName').value.trim();
+ if(!name){toast('Укажите название фактора или растения');$('factorName').focus();return;}
+ const mode=$('factorMode').value;
+ let startDate='',endDate='',date='',ongoing=false;
+ if(mode==='moment'){
+  date=$('factorDate').value;startDate=date;
+  if(!date){toast('Укажите дату и время контакта');$('factorDate').focus();return;}
+ }else if(mode==='period'){
+  startDate=$('factorStart').value;endDate=$('factorEnd').value;date=startDate;
+  if(!startDate){toast('Укажите начало периода');$('factorStart').focus();return;}
+  if(!endDate){toast('Укажите окончание периода');$('factorEnd').focus();return;}
+  if(new Date(endDate)<new Date(startDate)){toast('Конец периода не может быть раньше начала');$('factorEnd').focus();return;}
+ }else if(mode==='ongoing'){
+  startDate=$('factorSince').value;date=startDate;ongoing=true;
+  if(!startDate){toast('Укажите дату начала контакта');$('factorSince').focus();return;}
+ }else{toast('Выберите вариант контакта');return;}
+ const newFactor={
+  id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),
+  type:'factor',title:name,category:$('factorCategory').value,mode,date,startDate,endDate,ongoing,notes:$('factorNotes').value.trim()
+ };
+ // Save contacts through the same entries array and save() function used for reactions.
+ entries.push(newFactor);
+ if(!save()){
+  entries.pop();
+  return;
+ }
+ e.target.reset();
+ $('factorDate').value=localDateTime();
+ $('factorStart').value=localDateTime();
+ $('factorEnd').value=localDateTime();
+ $('factorSince').value=new Date().toISOString().slice(0,10);
+ updateFactorMode();
+ renderFactors();
+ renderAnalysis();
+ render();
+ showView('factorView');
+ toast('Контакт сохранён');
+});
+
+render();
+renderFoodHistory();
+renderReactionHistory();
+</script>
+</body>
+</html>
